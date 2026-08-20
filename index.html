@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ludus Simple Leyendas</title>
+  <style>
+    :root{
+      color-scheme:dark;
+      --bg:#121212;--side:#171717;--panel:#1b1b1b;--panel2:#22201d;--line:#393530;
+      --ink:#f3eee6;--muted:#b8afa2;--gold:#d8ae5d;--red:#b95a52;--green:#69a76d;--blue:#7396d8;
+      --shadow:0 12px 32px rgba(0,0,0,.28);--r:8px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.42 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    button,input,select{font:inherit}button{cursor:pointer}
+    .app{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 320px;grid-template-rows:auto 1fr}
+    aside{grid-column:1/-1;position:sticky;top:0;z-index:20;background:rgba(23,23,23,.98);border-bottom:1px solid var(--line);padding:10px 14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;backdrop-filter:blur(10px)}
+    main{grid-column:1;grid-row:2;min-width:0;max-width:1500px;width:100%;margin:0 auto;padding:16px}
+    .livePanel{grid-column:2;grid-row:2;position:sticky;top:67px;height:calc(100vh - 67px);overflow:auto;background:#151515;border-left:1px solid var(--line);padding:14px}
+    h1,h2,h3,p{margin-top:0}h1{font-size:1.15rem;margin-bottom:4px}h2{font-size:1rem;color:#f2d99b;margin-bottom:10px}
+    .brand{display:flex;gap:10px;align-items:center;min-width:180px}.brand h1{white-space:nowrap}.mark{width:38px;height:38px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;background:#272118;color:#ffe0a3;font-weight:900;flex:0 0 auto}
+    .nav{display:flex;gap:6px;overflow-x:auto;min-width:0}.nav button{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid transparent;background:transparent;color:var(--muted);padding:8px 10px;border-radius:var(--r);text-align:left;white-space:nowrap}.nav button:hover{background:#222;color:var(--ink)}.nav button.active{background:#2b2418;border-color:#6c572f;color:#ffe1a0}
+    .sideActions{display:grid;grid-template-columns:repeat(4,auto);gap:6px;align-items:center}.sideActions .btn{min-height:29px;padding:5px 7px;font-size:.76rem}.sideActions label.btn{display:flex;align-items:center;justify-content:center}.sideActions .full{grid-column:1/-1;text-align:right;max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .topbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    .muted{color:var(--muted)}.small{font-size:.84rem;color:var(--muted)}.tiny{font-size:.75rem;color:var(--muted)}
+    .kpis{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:8px;margin-bottom:12px}.kpi{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);padding:10px;min-height:70px}.kpi span{display:block;color:var(--muted);font-size:.73rem;text-transform:uppercase}.kpi b{display:block;font-size:1.25rem;margin-top:3px}
+    .panel{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);padding:12px;box-shadow:var(--shadow)}.panel.soft{background:var(--panel2)}
+    .grid2{display:grid;grid-template-columns:minmax(340px,1.05fr) minmax(320px,.95fr);gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(230px,1fr));gap:12px}.section{margin-bottom:12px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .btn{border:1px solid #4d4942;background:#272522;color:var(--ink);border-radius:var(--r);padding:7px 10px;min-height:34px}.btn:hover{filter:brightness(1.08)}.btn.primary{background:#3a2c16;border-color:var(--gold);color:#ffe2a4}.btn.good{background:#1f3424;border-color:#579260}.btn.bad{background:#3b211f;border-color:#9b524b}.btn.blue{background:#202a3d;border-color:#607fb7}.btn.ghost{background:transparent;color:var(--muted)}.btn:disabled{opacity:.45;cursor:not-allowed}
+    label{display:inline-grid;gap:3px;color:var(--muted);font-size:.78rem}select,input{min-height:34px;background:#141414;color:var(--ink);border:1px solid #4b4741;border-radius:var(--r);padding:7px 9px}input[type="checkbox"]{min-height:auto;width:16px;height:16px;padding:0;accent-color:var(--gold)}
+    .tableWrap{max-height:650px;overflow:auto;border:1px solid var(--line);border-radius:var(--r)}table{width:100%;border-collapse:separate;border-spacing:0}th,td{border-bottom:1px solid var(--line);padding:8px 7px;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#1d1d1d;color:#d7c390;font-size:.75rem;z-index:1}tbody tr:hover td{background:#202020}
+    .pill{display:inline-flex;align-items:center;gap:4px;border:1px solid #514b42;background:#211f1b;border-radius:999px;padding:2px 7px;font-size:.75rem;color:#dfd2be;margin:1px}.pill.gold{border-color:var(--gold);color:#ffe1a0}.pill.green{border-color:var(--green);color:#cdefc8}.pill.red{border-color:var(--red);color:#ffc7c1}.pill.blue{border-color:var(--blue);color:#d4e0ff}
+    .fighter{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:center}.avatar{width:44px;height:44px;border:1px solid #665134;border-radius:50%;display:grid;place-items:center;background:#2a2118;color:#ffe0a0;font-weight:900}.name{font-weight:850;color:#fff7e9}
+    .bar{height:7px;border:1px solid #413b34;background:#111;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,#946638,#e1bd67)}
+    .duel{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}.vs{font-weight:1000;color:#f0cf80;text-align:center}.pickCell{width:42px;text-align:center}.duelPick{width:18px;height:18px}.duelSummary{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.card{border:1px solid #48443e;background:#181818;border-radius:var(--r);padding:10px}.event{border:1px solid #49443c;background:#181818;border-radius:var(--r);padding:10px;margin-bottom:8px}.event.hot{border-color:#9a7840;background:#211c14}
+    .bracketWrap{overflow-x:auto;overflow-y:hidden;padding-bottom:8px}.bracket{display:flex;gap:12px;align-items:flex-start;min-width:max-content}.roundCol{width:240px;display:grid;gap:10px}.roundCol:nth-child(2){padding-top:28px}.roundCol:nth-child(3){padding-top:58px}.roundCol:nth-child(4){padding-top:88px}.match{border:1px solid var(--line);background:#161616;border-radius:var(--r);padding:9px;min-height:76px}.winner{color:#ffe0a0;font-weight:800;margin-top:5px}
+    .log{background:#111;border:1px solid #3b3731;border-radius:var(--r);padding:10px;white-space:pre-wrap;overflow:auto;max-height:380px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.78rem}.liveLog{height:calc(100vh - 165px);min-height:300px;max-height:none;font-size:.76rem}.liveLogLine{border-bottom:1px solid #28241f;padding:6px 0;color:#d9d0c4}
+    .modalBack{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}.modal{width:min(940px,96vw);max-height:90vh;overflow:auto;background:#202020;border:1px solid var(--gold);border-radius:var(--r);padding:14px;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#27231d;border:1px solid #6b5837;color:#ffe2a4;padding:9px 12px;border-radius:var(--r);z-index:80;box-shadow:var(--shadow)}.hidden{display:none}
+    @media(max-width:1050px){.app{grid-template-columns:1fr;grid-template-rows:auto auto auto}aside{position:relative;grid-template-columns:1fr;align-items:start}.livePanel{grid-column:1;grid-row:3;position:relative;top:auto;height:auto;border-left:0;border-top:1px solid var(--line)}.liveLog{height:240px;min-height:220px}main{grid-column:1;grid-row:2}.kpis{grid-template-columns:repeat(3,minmax(110px,1fr))}.grid2,.grid3{grid-template-columns:1fr}th{position:static}.sideActions{grid-template-columns:repeat(4,max-content);justify-content:start}.sideActions .full{text-align:left}}
+    @media(max-width:620px){main{padding:10px}.kpis{grid-template-columns:repeat(2,minmax(110px,1fr))}.duel,.duelSummary{grid-template-columns:1fr}.sideActions{grid-template-columns:repeat(2,max-content)}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="mark">LS</div><div><h1>Ludus Simple</h1><div class="tiny">Gladiadores y leyendas</div></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sideActions">
+      <button class="btn primary" id="saveBtn">Guardar</button>
+      <button class="btn" id="exportBtn">Exportar</button>
+      <label class="btn ghost">Importar<input id="importFile" type="file" accept=".json,.txt" hidden></label>
+      <button class="btn bad" id="freshBtn">Nuevo</button>
+      <div class="tiny full" id="saveStatus">Listo.</div>
+    </div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div><h1 id="title">Ludus</h1><div class="small" id="hint"></div></div>
+      <div class="row">
+        <button class="btn good" id="quickFight">Duelo aleatorio</button>
+        <button class="btn blue" id="quickRecruit">Reclutar</button>
+        <button class="btn" id="quickRest">Activar todos</button>
+      </div>
+    </div>
+    <section class="kpis" id="kpis"></section>
+    <div id="view"></div>
+  </main>
+  <section class="livePanel">
+    <div class="between"><h2>Registro</h2><button class="btn ghost" id="clearLiveLog">Limpiar</button></div>
+    <div class="liveLog" id="liveLog"></div>
+  </section>
+</div>
+
+<div class="modalBack" id="modalBack"><div class="modal"><div class="between"><h2 id="modalTitle">Modal</h2><button class="btn ghost" id="modalClose">Cerrar</button></div><div id="modalBody"></div></div></div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE = "ludus_simple_leyendas_v1";
+  const views = [["ludus","Ludus"],["arena","Arena"],["ranking","Ranking"],["torneos","Torneos"],["hall","Hall"],["leyendas","Leyendas"],["registro","Registro"],["manual","Manual"]];
+  const roles = ["Mirmillon","Retiarius","Secutor","Tracio","Dimachaerus","Hoplomachus","Bestiarius","Provocator"];
+  const origins = ["Romano","Galo","Germano","Nubio","Hispano","Griego","Dacio","Tracio","Sirio","Britano"];
+  const names = ["Maximus","Rutilus","Drusus","Caius","Lucius","Tiberius","Marcus","Sergius","Vitalis","Atticus","Severus","Felix","Aurelius","Cassius","Valerius","Flavius","Quintus","Rufus","Decimus","Varro","Julius","Titus","Spartacus","Crixus","Oenomaus","Brutus","Silvanus","Aquila","Sabinus","Victor","Pollux","Marius","Verus","Celer","Magnus","Octavius","Agrippa","Hector","Leonidas","Draco","Orion","Brennus","Arminius","Corvus","Scipio"];
+  const icons = {Mirmillon:"MI",Retiarius:"RE",Secutor:"SE",Tracio:"TR",Dimachaerus:"DI",Hoplomachus:"HO",Bestiarius:"BE",Provocator:"PR"};
+  const fightTypes = {
+    normal:{name:"Normal",death:.10,injury:.18,fame:1},
+    exhibition:{name:"Exhibicion",death:0,injury:.04,fame:.65},
+    blood:{name:"A muerte",death:.28,injury:.34,fame:1.3},
+    title:{name:"Titulo",death:.12,injury:.20,fame:1.45}
+  };
+
+  let view = "ludus";
+  let state = defaultState();
+  let pickState = {a:null,b:null,title:false,mortal:false};
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
+  const rand = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+  const pick = a => a[rand(0,a.length-1)];
+  const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
+  const uid = () => crypto && crypto.randomUUID ? crypto.randomUUID() : "g_" + Date.now().toString(36) + Math.random().toString(36).slice(2);
+  function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+
+  function defaultState(){
+    return {
+      cap:10,pacific:false,autoReplace:true,pairMode:"balanced",ludus:[],hall:[],dead:[],allTime:[],log:[],rivalries:{},
+      legendsElo:{},last:null,classic:null,br:null,legendTournament:null,legendBR:null,titleHolder:null
+    };
+  }
+  function load(){try{const raw=localStorage.getItem(STORAGE);if(raw)state=JSON.parse(raw)}catch(e){console.warn(e)}normalize()}
+  function save(){normalize();localStorage.setItem(STORAGE,JSON.stringify(state));$("saveStatus").textContent="Guardado " + new Date().toLocaleTimeString()}
+  function normalize(){
+    state = Object.assign(defaultState(), state || {});
+    ["ludus","hall","dead","allTime","log"].forEach(k => { if(!Array.isArray(state[k])) state[k] = []; });
+    state.rivalries = state.rivalries || {};
+    state.legendsElo = state.legendsElo || {};
+    state.cap = clamp(parseInt(state.cap || 8,10),2,80);
+    allGlads().forEach(fix);
+    if(state.titleHolder && !findAny(state.titleHolder)) state.titleHolder = null;
+  }
+  function allGlads(){return [...state.ludus,...state.hall,...state.dead,...state.allTime]}
+  function live(){return state.ludus.filter(g=>g.alive)}
+  function active(){return state.ludus.filter(g=>g.alive && g.active)}
+  function findAny(id){return [...state.ludus,...state.hall,...state.dead].find(g=>g.id===id)||null}
+  function findL(id){return state.ludus.find(g=>g.id===id)||null}
+  function findH(id){return state.hall.find(g=>g.id===id)||null}
+  function log(msg){state.log.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);state.log=state.log.slice(0,500)}
+  function toast(msg){const t=$("toast");t.textContent=msg;t.classList.remove("hidden");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add("hidden"),1600)}
+  function unique(base){const used=new Set(allGlads().map(g=>g.name));if(!used.has(base))return base;let i=2;while(used.has(`${base} ${i}`))i++;return `${base} ${i}`}
+
+  function make(opts={}){
+    const g = fix({
+      id:uid(),name:unique(opts.name || pick(names)),role:opts.role || pick(roles),origin:opts.origin || pick(origins),
+      hp:opts.hp ?? rand(86,116),str:opts.str ?? rand(60,96),def:opts.def ?? rand(60,96),agi:opts.agi ?? rand(60,96),
+      fame:opts.fame ?? 1200+rand(-70,70),wins:opts.wins || 0,losses:opts.losses || 0,streak:0,bestStreak:0,alive:true,active:true,history:[]
+    });
+    state.allTime.push(snapshot(g));
+    return g;
+  }
+  function fix(g){
+    g.id=g.id||uid();g.name=g.name||unique(pick(names));g.role=g.role||pick(roles);g.origin=g.origin||pick(origins);
+    g.hp=clamp(parseInt(g.hp||100,10),45,210);g.str=clamp(parseInt(g.str||75,10),30,200);g.def=clamp(parseInt(g.def||75,10),30,200);g.agi=clamp(parseInt(g.agi||75,10),30,200);
+    g.fame=Math.max(100,parseInt(g.fame||1200,10));g.wins=parseInt(g.wins||0,10);g.losses=parseInt(g.losses||0,10);g.streak=parseInt(g.streak||0,10);g.bestStreak=parseInt(g.bestStreak||0,10);
+    g.alive=g.alive!==false;g.active=g.active!==false;g.history=Array.isArray(g.history)?g.history:[];return g;
+  }
+  function snapshot(g){return {id:g.id,name:g.name,role:g.role,origin:g.origin,hp:g.hp,str:g.str,def:g.def,agi:g.agi,fame:g.fame,wins:g.wins,losses:g.losses,alive:g.alive}}
+  function pwr(g){return Math.round(Math.sqrt(g.hp*.9+g.str*1.22+g.def*1.12+g.agi*1.16)*3.15 + Math.log10(Math.max(10,g.fame))*4.2 + Math.sqrt(g.wins||0)*2.4)}
+  function pwrPill(g){const n=typeof g==="number"?g:pwr(g);let cls=n>=95?"gold":n>=72?"green":n<55?"red":"";return `<span class="pill ${cls}">PWR ${n}</span>`}
+  function bar(label,val,min,max){const pct=clamp(Math.round((val-min)/(max-min)*100),0,100);return `<div class="tiny">${label} ${val}</div><div class="bar"><span style="width:${pct}%"></span></div>`}
+  function pushHist(g,h){g.history.unshift(Object.assign({t:new Date().toLocaleString()},h));g.history=g.history.slice(0,45)}
+  function status(g){if(!g.alive)return `<span class="pill red">Muerto</span>`;return g.active?`<span class="pill green">Activo</span>`:`<span class="pill blue">Descanso</span>`}
+  function isChampion(g){return !!g && state.titleHolder===g.id}
+  function champ(){return findAny(state.titleHolder)}
+  function mini(g){
+    if(!g)return `<div class="card muted">Sin gladiador</div>`;
+    return `<div class="fighter"><div class="avatar">${esc(icons[g.role]||"GL")}</div><div><div class="name">${esc(g.name)} ${isChampion(g)?'<span class="pill gold">Campeon</span>':""}</div><div class="small">${esc(g.role)} · ${esc(g.origin)} · ${g.wins}V/${g.losses}D · racha ${g.streak}</div><div>${pwrPill(g)} <span class="pill">Fama ${g.fame}</span> ${status(g)}</div></div></div>`;
+  }
+  function ranking(){return live().slice().sort((a,b)=>(pwr(b)+b.fame/90+b.wins*4+b.streak*4)-(pwr(a)+a.fame/90+a.wins*4+a.streak*4))}
+  function rivalryKey(a,b){return [a.id,b.id].sort().join("_")}
+  function rivalry(a,b){return state.rivalries[rivalryKey(a,b)]||null}
+  function addRivalry(a,b,w,type){
+    const k=rivalryKey(a,b);let r=state.rivalries[k];if(!r)r=state.rivalries[k]={id:k,aId:a.id,bId:b.id,fights:0,aWins:0,bWins:0,intensity:0,history:[]};
+    r.fights++;if(w.id===r.aId)r.aWins++;else r.bWins++;r.intensity=clamp(r.intensity+1+(type==="blood"?1:0)+(type==="title"?2:0),0,10);
+    r.history.unshift({t:new Date().toLocaleString(),winnerId:w.id,type});r.history=r.history.slice(0,10);
+  }
+  function odds(a,b){return clamp(.5+(pwr(a)-pwr(b))/400+(a.fame-b.fame)/2300,.08,.92)}
+  function hype(a,b,type="normal"){
+    if(!a||!b||a.id===b.id)return 0;
+    let h=24+Math.max(0,28-Math.abs(pwr(a)-pwr(b))/2);
+    if(a.fame+b.fame>2600)h+=10;if(a.streak>=3||b.streak>=3)h+=8;if(a.losses===0&&b.losses===0&&a.wins>=2&&b.wins>=2)h+=12;
+    const r=rivalry(a,b);if(r)h+=Math.min(26,6+r.intensity*2);if(type==="title")h+=18;if(type==="blood")h+=10;if(isChampion(a)||isChampion(b))h+=10;
+    return clamp(Math.round(h),5,100);
+  }
+  function hypeCls(n){return n>=85?"gold":n>=70?"green":n<40?"red":""}
+
+  function fight(a,b,type="normal",opts={}){
+    if(!a||!b||a.id===b.id){toast("Elige dos gladiadores distintos");return null}
+    const cfg=fightTypes[type]||fightTypes.normal,p=odds(a,b),w=Math.random()<p?a:b,l=w.id===a.id?b:a,prob=w.id===a.id?p:1-p,h=hype(a,b,type);
+    const upset=prob<.42, fame=Math.round((12+h/4+(upset?14:0))*cfg.fame);
+    w.wins++;w.streak++;w.bestStreak=Math.max(w.bestStreak,w.streak);l.losses++;l.streak=0;w.fame+=fame;l.fame=Math.max(100,l.fame-Math.round(fame/2));
+    ["str","def","agi"].forEach(k=>{w[k]=clamp(w[k]+rand(0,upset?3:2),30,200);l[k]=clamp(l[k]+rand(0,1),30,195)});w.hp=clamp(w.hp+rand(0,2),45,210);
+    let death=false, injury=false;
+    if(!state.pacific && !opts.safeContext && !opts.noDeath){
+      const baseDeath = opts.mortal ? fightTypes.blood.death : cfg.death;
+      const deathChance = l.active ? baseDeath : baseDeath*.5;
+      if(Math.random()<deathChance){kill(l);death=true}
+      else if(Math.random()<cfg.injury){l.active=false;injury=true}
+    }else if(Math.random()<cfg.injury*.45){l.active=false;injury=true}
+    if(type==="title")state.titleHolder=w.id;
+    addRivalry(a,b,w,type);
+    pushHist(w,{type,result:"Victoria",vs:l.name,hype:h,text:`Prob ${Math.round(prob*100)}%. +${fame} fama.`});
+    pushHist(l,{type,result:"Derrota",vs:w.name,hype:h,text:death?"Muere en combate.":injury?"Queda en descanso.":"Sobrevive."});
+    state.last={aId:a.id,bId:b.id,wId:w.id,lId:l.id,type,hype:h,death,injury,text:`${w.name} vence a ${l.name}`};
+    log(`${w.name} vence a ${l.name} · ${cfg.name} · interes ${h}${death?" · muerte":injury?" · descanso":""}`);
+    if(!opts.noLiberate) maybeLiberate(w);
+    if(state.autoReplace && state.ludus.length<state.cap)fill(1,false);
+    save();render();
+    return {winner:w,loser:l,hype:h,death,injury,type};
+  }
+  function kill(g){state.ludus=state.ludus.filter(x=>x.id!==g.id);g.alive=false;g.active=false;state.dead.unshift(g);if(state.titleHolder===g.id)state.titleHolder=null}
+  function retire(g){state.ludus=state.ludus.filter(x=>x.id!==g.id);g.active=false;state.hall.unshift(g);if(state.legendsElo[g.id]==null)state.legendsElo[g.id]=1200+Math.min(220,g.wins*14);log(`${g.name} entra al Hall de la Fama`)}
+  function maybeLiberate(g){if(!findL(g.id))return;if(g.wins>=10||pwr(g)>=118||g.fame>=1580){log(`${g.name} ya merece el Hall si quieres retirarlo.`)}}
+  function fill(n=99,renderNow=true){let c=0;while(state.ludus.length<state.cap&&c<n){const g=make();state.ludus.push(g);log(`Recluta: ${g.name}`);c++}if(renderNow){save();render()}}
+  function pickAutoPair(){const act=active();if(act.length<2)return null;let a,b;if(state.pairMode==="random"){a=pick(act);do{b=pick(act)}while(b.id===a.id)}else if(state.pairMode==="underdog"){const s=act.slice().sort((x,y)=>pwr(x)-pwr(y));a=pick(s.slice(0,Math.min(3,s.length)));b=pick(s.slice(Math.max(1,s.length-3)));if(a.id===b.id)b=s[s.length-1]}else{const s=act.slice().sort((x,y)=>x.wins-y.wins||pwr(x)-pwr(y));a=pick(s.slice(0,Math.min(4,s.length)));const pool=s.filter(x=>x.id!==a.id&&Math.abs(x.wins-a.wins)<=2);b=pool.length?pick(pool):s.find(x=>x.id!==a.id)}return {a,b}}
+  function arenaFightType(){return pickState.title?"title":pickState.mortal?"blood":"normal"}
+  function arenaFightOptions(){return {noDeath:!pickState.mortal,mortal:pickState.mortal}}
+  function simulate(type=arenaFightType(),opts=arenaFightOptions()){const pair=pickAutoPair();if(!pair){toast("Necesitas 2 activos");return null}return fight(pair.a,pair.b,type,opts)}
+  function runRandomMany(n){for(let i=0;i<n;i++){if(active().length<2)break;simulate()}render()}
+  function seed(){state=defaultState();fill(8,false);const c=ranking()[0];if(c){c.wins=3;c.fame+=110;state.titleHolder=c.id}log("Nuevo ludus creado.");save()}
+
+  function pairs(list){const a=shuffle(list),round=[];for(let i=0;i<a.length;i+=2)round.push({aId:a[i].id,bId:a[i+1].id,a:a[i].name,b:a[i+1].name,wId:null,w:null});return round}
+  function startTournament(n){const list=active();if(list.length<n){toast(`Necesitas ${n} activos`);return}state.classic={rounds:[pairs(list.slice().sort(()=>Math.random()-.5).slice(0,n))],ri:0,mi:0,done:false,champ:null};save();render()}
+  function stepTournament(key="classic",scope="ludus"){
+    const t=state[key];if(!t||t.done){toast(t?"Torneo terminado":"No hay torneo");return}
+    const round=t.rounds[t.ri],m=round[t.mi];
+    if(!m){
+      const winners=round.map(x=>x.wId).filter(Boolean);
+      if(winners.length===1){const c=scope==="hall"?findH(winners[0]):findL(winners[0]);t.done=true;t.champ=c?c.name:"Sin campeon";if(c){c.fame+=60;["str","def","agi"].forEach(k=>c[k]=clamp(c[k]+2,30,205));}log(`${t.champ} gana el torneo`);save();render();return}
+      const next=[];for(let i=0;i<winners.length;i+=2){const a=scope==="hall"?findH(winners[i]):findL(winners[i]),b=scope==="hall"?findH(winners[i+1]):findL(winners[i+1]);next.push({aId:winners[i],bId:winners[i+1],a:a?.name||"?",b:b?.name||"?",wId:null,w:null})}
+      t.ri++;t.mi=0;t.rounds.push(next);save();render();return;
+    }
+    const a=scope==="hall"?findH(m.aId):findL(m.aId),b=scope==="hall"?findH(m.bId):findL(m.bId);
+    if(!a||!b){const alive=a||b;m.wId=alive?.id;m.w=alive?.name||"?"}else if(scope==="hall"){const r=legendDuel(a,b,false);m.wId=r.winner.id;m.w=r.winner.name}else{const r=fight(a,b,"normal");m.wId=r.winner.id;m.w=r.winner.name}
+    t.mi++;save();render();
+  }
+  function startBR(){const list=active();if(list.length<3){toast("Necesitas 3 activos");return}state.br={alive:list.map(g=>g.id),rounds:[],done:false,champ:null};save();render()}
+  function stepBR(){
+    const br=state.br;if(!br||br.done){toast(br?"BR terminado":"No hay BR");return}
+    br.alive=br.alive.map(findL).filter(Boolean).map(g=>g.id);
+    if(br.alive.length<2){br.done=true;br.champ=findL(br.alive[0])?.name||"Sin campeon";save();render();return}
+    const list=br.alive.map(findL).filter(Boolean).sort((a,b)=>pwr(a)-pwr(b)),a=list[0],b=list[list.length-1],isFinal=list.length===2;
+    const r=fight(a,b,"blood",isFinal?{noDeath:true,noLiberate:true}:{});
+    br.rounds.push({a:a.name,b:b.name,w:r.winner.name,l:r.loser.name,final:isFinal});br.alive=br.alive.filter(id=>id!==r.loser.id);
+    if(isFinal){
+      const c=findL(r.winner.id);br.done=true;br.champ=c?.name||r.winner.name;if(c)c.fame+=80;log(`${br.champ} gana el Battle Royale`);
+      save();render();
+      askBRFinal(r.winner,r.loser);
+      return;
+    }
+    save();render();
+  }
+  function askBRFinal(winner,loser){
+    showChoice("Clemencia de la final",`${winner.name} ha ganado el Battle Royale.\n\n${loser.name} queda derrotado en la arena.\n\n¿Perdonas al finalista?`,"Perdonar","Ejecutar").then(spare=>{
+      const liveLoser=findL(loser.id);
+      if(liveLoser){
+        if(spare||state.pacific){liveLoser.active=false;log(`${loser.name} recibe clemencia y queda en descanso`)}
+        else{kill(liveLoser);log(`${loser.name} es ejecutado tras la final del BR`)}
+      }
+      return showChoice("Liberar campeon",`${winner.name} es campeon del Battle Royale.\n\n¿Lo liberas al Hall de la Fama como leyenda o vuelve al Ludus?`,"Liberar al Hall","Vuelve al Ludus");
+    }).then(liberate=>{
+      const champ=findL(winner.id);
+      if(liberate&&champ)retire(champ);
+      else if(champ)log(`${winner.name} vuelve al Ludus como campeon del BR`);
+      if(state.autoReplace)fill(99,false);
+      save();render();
+    });
+  }
+  function resurrectTournament(n){if(state.dead.length<n){toast("No hay suficientes muertos");return}state.classic={rounds:[pairs(state.dead.slice().sort(()=>Math.random()-.5).slice(0,n))],ri:0,mi:0,done:false,champ:null,afterlife:true};save();render()}
+  function stepAfterlife(){
+    const t=state.classic;if(!t||!t.afterlife){toast("No hay torneo del mas alla");return}
+    const round=t.rounds[t.ri],m=round[t.mi];
+    if(!m){
+      const winners=round.map(x=>x.wId).filter(Boolean);
+      if(winners.length===1){const old=state.dead.find(g=>g.id===winners[0]);t.done=true;t.champ=old?.name||"Sin campeon";if(old){state.dead=state.dead.filter(g=>g.id!==old.id);const r=JSON.parse(JSON.stringify(old));r.id=uid();r.name=unique(old.name+" Renacido");r.alive=true;r.active=true;r.history=[];r.fame+=90;state.ludus.push(r);log(`${r.name} regresa del mas alla`)}save();render();return}
+      const next=[];for(let i=0;i<winners.length;i+=2){const a=state.dead.find(g=>g.id===winners[i]),b=state.dead.find(g=>g.id===winners[i+1]);next.push({aId:winners[i],bId:winners[i+1],a:a?.name||"?",b:b?.name||"?",wId:null,w:null})}
+      t.ri++;t.mi=0;t.rounds.push(next);save();render();return;
+    }
+    const a=state.dead.find(g=>g.id===m.aId),b=state.dead.find(g=>g.id===m.bId);
+    const w=Math.random()<odds(a,b)?a:b;m.wId=w.id;m.w=w.name;log(`${w.name} gana un duelo del mas alla`);t.mi++;save();render();
+  }
+  function legendDuel(a=null,b=null,doRender=true){
+    if(state.hall.length<2){toast("Necesitas 2 leyendas");return null}
+    if(!a||!b){a=pick(state.hall);do{b=pick(state.hall)}while(b.id===a.id)}
+    if(a.id===b.id){toast("Elige leyendas distintas");return null}
+    const ea=state.legendsElo[a.id]??1200,eb=state.legendsElo[b.id]??1200,p=1/(1+Math.pow(10,(eb-ea)/400)),w=Math.random()<p?a:b,l=w.id===a.id?b:a;
+    state.legendsElo[a.id]=Math.round(ea+24*((w.id===a.id?1:0)-p));state.legendsElo[b.id]=Math.round(eb+24*((w.id===b.id?1:0)-(1-p)));
+    state.last={aId:a.id,bId:b.id,wId:w.id,lId:l.id,type:"leyenda",hype:hype(a,b,"normal"),death:false,injury:false,text:`${w.name} vence a ${l.name}`};
+    log(`Leyendas: ${w.name} vence a ${l.name} · ELO ${state.legendsElo[w.id]}`);
+    if(doRender){save();render()}return {winner:w,loser:l};
+  }
+  function startLegendTournament(n){if(state.hall.length<n){toast(`Necesitas ${n} leyendas`);return}state.legendTournament={rounds:[pairs(state.hall.slice().sort(()=>Math.random()-.5).slice(0,n))],ri:0,mi:0,done:false,champ:null};save();render()}
+  function stepLegendTournament(){stepTournament("legendTournament","hall")}
+  function startLegendBR(){if(state.hall.length<3){toast("Necesitas 3 leyendas");return}state.legendBR={alive:state.hall.map(g=>g.id),rounds:[],done:false,champ:null};save();render()}
+  function stepLegendBR(){const br=state.legendBR;if(!br||br.done){toast(br?"BR terminado":"No hay BR");return}const list=br.alive.map(findH).filter(Boolean);if(list.length<2){br.done=true;br.champ=findH(br.alive[0])?.name||"Sin campeon";save();render();return}const s=list.sort((a,b)=>pwr(a)-pwr(b)),a=s[0],b=s[s.length-1],r=legendDuel(a,b,false);br.rounds.push({a:a.name,b:b.name,w:r.winner.name,l:r.loser.name});br.alive=br.alive.filter(id=>id!==r.loser.id);if(br.alive.length===1){br.done=true;br.champ=findH(br.alive[0])?.name||"Sin campeon";log(`${br.champ} gana el BR de leyendas`)}save();render()}
+
+  function render(){
+    normalize();renderNav();renderKpis();renderLiveLog();
+    const map={ludus:renderLudus,arena:renderArena,ranking:renderRanking,torneos:renderTorneos,hall:renderHall,leyendas:renderLeyendas,registro:renderRegistro,manual:renderManual};
+    $("view").innerHTML=(map[view]||renderLudus)();bind();
+  }
+  function renderNav(){$("nav").innerHTML=views.map(([id,label])=>`<button class="${view===id?"active":""}" data-view="${id}"><span>${label}</span><span>${navNum(id)}</span></button>`).join("")}
+  function navNum(id){return id==="ludus"?state.ludus.length:id==="hall"?state.hall.length:id==="leyendas"?state.hall.length:id==="registro"?state.log.length:""}
+  function renderKpis(){const c=champ(),top=ranking()[0];$("kpis").innerHTML=[
+    ["Roster",`${state.ludus.length}/${state.cap}`,`${active().length} activos`],["Campeon",c?.name||"Vacante",c?`PWR ${pwr(c)}`:"pelea titular"],
+    ["Hall",state.hall.length,"leyendas"],["Muertos",state.dead.length,state.pacific?"modo pacifico":"arena mortal"],["Top",top?.name||"-",top?`PWR ${pwr(top)}`:"-"]
+  ].map(([a,b,c])=>`<div class="kpi"><span>${esc(a)}</span><b>${esc(b)}</b><div class="tiny">${esc(c)}</div></div>`).join("")}
+  function renderLiveLog(){const box=$("liveLog");if(!box)return;box.innerHTML=state.log.length?state.log.slice(0,60).map(x=>`<div class="liveLogLine">${esc(x)}</div>`).join(""):`<div class="card muted">Sin sucesos todavia.</div>`}
+  function title(t,h){$("title").textContent=t;$("hint").textContent=h||""}
+
+  function renderLudus(){
+    title("Ludus","Tu roster. Crea, activa, descansa, retira al Hall o deja que la arena haga el resto.");
+    return `<section class="panel section"><div class="row">
+      <button class="btn good" id="newBtn">Crear gladiador</button><button class="btn" id="fillBtn">Rellenar cupos</button>
+      <label>Capacidad<input id="capInput" type="number" min="2" max="80" value="${state.cap}" style="width:86px"></label><button class="btn primary" id="capBtn">OK</button>
+      <label><input type="checkbox" id="pacific" ${state.pacific?"checked":""}> Sin muertes</label><label><input type="checkbox" id="autoReplace" ${state.autoReplace?"checked":""}> Auto-reemplazo</label>
+    </div></section><section class="panel"><div class="tableWrap"><table><thead><tr><th>Gladiador</th><th>PWR</th><th>Stats</th><th>Acciones</th></tr></thead><tbody>
+    ${state.ludus.map(g=>`<tr><td>${mini(g)}</td><td>${pwrPill(g)}</td><td>${bar("HP",g.hp,45,210)}${bar("STR",g.str,30,200)}${bar("DEF",g.def,30,200)}${bar("AGI",g.agi,30,200)}</td><td><div class="row"><button class="btn" data-card="${g.id}">Ficha</button><button class="btn" data-toggle="${g.id}">${g.active?"Descansar":"Activar"}</button><button class="btn primary" data-edit="${g.id}">Editar</button><button class="btn blue" data-retire="${g.id}">Hall</button><button class="btn bad" data-expel="${g.id}">Expulsar</button></div></td></tr>`).join("")||`<tr><td colspan="4"><div class="card muted">Sin gladiadores.</div></td></tr>`}
+    </tbody></table></div></section>`;
+  }
+  function renderArena(){
+    title("Arena","Selecciona dos gladiadores o deja que el juego elija al azar.");
+    const a=findL(pickState.a), b=findL(pickState.b), type=arenaFightType(), h=a&&b?hype(a,b,type):0;
+    return `<section class="panel section"><div class="row">
+      <button class="btn good" id="runSelected">Pelear seleccionados</button>
+      <button class="btn primary" id="randomOne">Aleatorio x1</button>
+      <button class="btn" id="randomFive">Aleatorio x5</button>
+      <button class="btn" id="randomTwenty">Aleatorio x20</button>
+      <label>Criterio<select id="pairMode"><option value="balanced">Parecido en victorias</option><option value="random">Aleatorio puro</option><option value="underdog">Debil contra fuerte</option></select></label>
+      <label><input type="checkbox" id="mortalFight" ${pickState.mortal?"checked":""}> A vida o muerte</label>
+      <label><input type="checkbox" id="titleFight" ${pickState.title?"checked":""}> Por titulo del Ludus</label>
+      <label><input type="checkbox" id="arenaPacific" ${state.pacific?"checked":""}> Sin muertes global <span class="tiny">anula a muerte</span></label>
+    </div><p class="small">${fightHelp(type)} ${pickState.title?"El ganador sera campeon del Ludus.":""}</p>${a&&b?`<div class="duelSummary">${mini(a)}<div class="vs">VS<br><span class="pill ${hypeCls(h)}">Interes ${h}</span></div>${mini(b)}</div>`:`<div class="card muted">Marca dos gladiadores en la lista para pelear exactamente esos dos.</div>`}</section>
+    <section class="panel section"><h2>Gladiadores disponibles</h2><div class="tableWrap"><table><thead><tr><th class="pickCell">Sel.</th><th>Gladiador</th><th>PWR</th><th>Fama</th><th>Record</th><th>Racha</th><th>Estado</th></tr></thead><tbody>${live().map(g=>`<tr><td class="pickCell"><input class="duelPick" type="checkbox" value="${g.id}" ${[pickState.a,pickState.b].includes(g.id)?"checked":""} ${g.active?"":"disabled"}></td><td>${mini(g)}</td><td>${pwrPill(g)}</td><td>${g.fame}</td><td>${g.wins}V/${g.losses}D</td><td>${g.streak}</td><td>${status(g)}</td></tr>`).join("")}</tbody></table></div></section>
+    <section class="panel"><h2>Rivalidades vivas</h2>${rivalryList(5)}</section>`;
+  }
+  function fightHelp(type){return {
+    normal:"Combate de Ludus: cuenta para victorias, fama, rachas, rivalidades y puede dejar heridos o muertos si no activas 'Sin muertes'.",
+    exhibition:"Exhibicion: pelea segura. No afecta apenas a tu Ludus y no deberia matar.",
+    blood:"A muerte: pelea extrema. Sube el interes y la fama, pero el perdedor tiene riesgo alto de morir.",
+    title:"Titulo: pelea por el campeon del Ludus. El ganador queda marcado como campeon."
+  }[type]||""}
+  function opts(list,id){return list.map(g=>`<option value="${g.id}" ${g.id===id?"selected":""}>${esc(g.name)} · PWR ${pwr(g)}</option>`).join("")}
+  function rivalryList(n=99){const list=Object.values(state.rivalries).filter(r=>r.fights).sort((a,b)=>b.intensity-a.intensity||b.fights-a.fights).slice(0,n);return list.map(r=>{const a=findAny(r.aId),b=findAny(r.bId);return `<div class="event ${r.intensity>=7?"hot":""}"><div class="between"><b>${esc(a?.name||"?")} vs ${esc(b?.name||"?")}</b><span class="pill gold">${r.intensity}/10</span></div><div class="small">${r.fights} peleas · marcador ${r.aWins}-${r.bWins}</div><div class="row" style="margin-top:8px"><button class="btn primary" data-rival="${r.id}">Revancha</button><button class="btn bad" data-rival-blood="${r.id}">A muerte</button></div></div>`}).join("")||`<div class="card muted">Aun no hay rivalidades.</div>`}
+  function renderRanking(){title("Ranking","Puntuaciones limpias para decidir quien merece pelea grande.");return `<section class="panel"><div class="tableWrap"><table><thead><tr><th>#</th><th>Gladiador</th><th>PWR</th><th>Fama</th><th>Record</th><th>Racha</th><th></th></tr></thead><tbody>${ranking().map((g,i)=>`<tr><td>${isChampion(g)?"C":i+1}</td><td>${mini(g)}</td><td>${pwrPill(g)}</td><td>${g.fame}</td><td>${g.wins}V/${g.losses}D</td><td>${g.streak}</td><td><button class="btn primary" data-book-rank="${g.id}">Al arena</button></td></tr>`).join("")}</tbody></table></div></section>`}
+  function renderTorneos(){
+    title("Torneos","Eventos grandes: torneo clasico, Battle Royale con clemencia final, y Mas Alla para muertos.");
+    return `<section class="panel section"><h2>Torneo clasico</h2><p class="small">Elimina por rondas. Cada 'Siguiente combate' resuelve una pelea del cuadro.</p><div class="row"><button class="btn primary" id="tor4">Iniciar 4</button><button class="btn primary" id="tor8">Iniciar 8</button><button class="btn good" id="torNext" ${state.classic&&!state.classic.afterlife&&!state.classic.done?"":"disabled"}>Siguiente combate</button><button class="btn bad" id="torClear">Limpiar</button></div>${bracket(state.classic&&!state.classic.afterlife?state.classic:null)}</section><section class="panel section"><h2>Battle Royale</h2><p class="small">Los eliminados salen del BR. En la final decides clemencia para el perdedor y si el campeon entra al Hall.</p><div class="row"><button class="btn primary" id="brStart">Iniciar BR</button><button class="btn good" id="brNext" ${state.br&&!state.br.done?"":"disabled"}>Siguiente eliminacion</button><button class="btn bad" id="brClear">Limpiar</button></div>${brRows(state.br)}</section><section class="panel"><h2>Mas Alla</h2><p class="small">Muertos compiten por volver al ludus. El campeon renace con nuevo nombre.</p><div class="row"><button class="btn primary" id="after4">Iniciar 4</button><button class="btn primary" id="after8">Iniciar 8</button><button class="btn good" id="afterNext" ${state.classic&&state.classic.afterlife&&!state.classic.done?"":"disabled"}>Siguiente combate</button></div>${bracket(state.classic&&state.classic.afterlife?state.classic:null)}</section>`;
+  }
+  function bracket(t){if(!t)return `<div class="card muted">Sin torneo.</div>`;return `<div class="bracketWrap"><div class="bracket">${t.rounds.map((round,i)=>`<div class="roundCol"><div class="tiny">Ronda ${i+1}</div>${round.map(m=>`<div class="match"><div>${esc(m.a)}<br><span class="tiny">vs</span><br>${esc(m.b)}</div><div class="winner">${m.w?`Gana ${esc(m.w)}`:"Pendiente"}</div></div>`).join("")}</div>`).join("")}</div></div>${t.done?`<div class="pill gold">Campeon: ${esc(t.champ)}</div>`:""}`}
+  function brRows(br){if(!br)return `<div class="card muted">Sin BR.</div>`;return `<div class="bracketWrap"><div class="bracket"><div class="roundCol">${br.rounds.map((r,i)=>`<div class="match"><div class="tiny">${r.final?"Final":"Eliminacion "+(i+1)}</div>${esc(r.a)} vs ${esc(r.b)}<div class="winner">${esc(r.w)} elimina a ${esc(r.l)}</div></div>`).join("")||`<div class="card muted">Participantes: ${br.alive.length}</div>`}</div></div></div>${br.done?`<div class="pill gold">Campeon: ${esc(br.champ)}</div>`:""}`}
+  function renderHall(){title("Hall","Retira a tus favoritos. Aqui dejan de morir y pasan a leyendas jugables.");return `<section class="panel"><h2>Hall de la Fama</h2><div class="cards">${state.hall.map(g=>`<div class="card">${mini(g)}<div class="row" style="margin-top:8px"><button class="btn" data-card="${g.id}">Ficha</button></div></div>`).join("")||`<div class="card muted">Aun no has retirado a nadie.</div>`}</div></section>`}
+  function renderLeyendas(){title("Leyendas","Duelos eternos con ELO. No cambian tu ludus: son puro mito.");return `<div class="grid2 section"><section class="panel"><h2>Duelo de leyendas</h2><div class="row"><select id="legA">${opts(state.hall)}</select><select id="legB">${opts(state.hall)}</select><button class="btn primary" id="legFight" ${state.hall.length>=2?"":"disabled"}>Pelear</button></div><div class="row" style="margin-top:8px"><button class="btn" id="legTor4">Torneo 4</button><button class="btn" id="legTor8">Torneo 8</button><button class="btn good" id="legTorNext" ${state.legendTournament&&!state.legendTournament.done?"":"disabled"}>Siguiente torneo</button><button class="btn bad" id="legTorClear">Limpiar</button></div>${bracket(state.legendTournament)}</section><section class="panel"><h2>BR de leyendas</h2><div class="row"><button class="btn primary" id="legBRStart">Iniciar</button><button class="btn good" id="legBRNext" ${state.legendBR&&!state.legendBR.done?"":"disabled"}>Siguiente</button><button class="btn bad" id="legBRClear">Limpiar</button></div>${brRows(state.legendBR)}</section></div><section class="panel"><h2>Ranking eterno</h2><div class="cards">${state.hall.slice().sort((a,b)=>(state.legendsElo[b.id]||1200)-(state.legendsElo[a.id]||1200)).map(g=>`<div class="card">${mini(g)}<div class="pill gold">ELO ${state.legendsElo[g.id]||1200}</div></div>`).join("")||`<div class="card muted">Sin leyendas.</div>`}</div></section>`}
+  function renderRegistro(){title("Registro","Solo hechos: resultados, muertes, torneos y ascensos al Hall.");return `<div class="grid2"><section class="panel"><h2>Ultimo combate</h2>${state.last?`<div class="event hot"><b>${esc(state.last.text)}</b><div class="small">${esc(fightTypes[state.last.type]?.name||state.last.type)} · Interes ${state.last.hype}${state.last.death?" · muerte":""}</div></div>`:`<div class="card muted">Sin combates.</div>`}<h2>Rivalidades</h2>${rivalryList(12)}</section><section class="panel"><h2>Log</h2><div class="log">${state.log.map(esc).join("\n")}</div><div class="row" style="margin-top:8px"><button class="btn bad" id="clearLog">Limpiar</button></div></section></div>`}
+  function renderManual(){title("Manual","Como se juega y que significa cada cosa.");return `<section class="panel section"><h2>Objetivo</h2><p>Este no es un modo historia. Tu creas tu propia historia mirando resultados, rachas, rivalidades, muertes, Hall y leyendas. El registro vivo de la derecha esta siempre visible para que sepas que acaba de pasar.</p></section><section class="grid2 section"><div class="panel"><h2>Flujo basico</h2><ol><li>Crea o rellena gladiadores en <b>Ludus</b>.</li><li>En <b>Arena</b>, marca dos gladiadores con checkbox y pulsa <b>Pelear seleccionados</b>.</li><li>Si quieres caos rapido, usa <b>Aleatorio x1</b>, <b>Aleatorio x5</b> o <b>Aleatorio x20</b>.</li><li>Mira el <b>Ranking</b> para decidir quien merece pelea grande.</li><li>Cuando alguien sea importante para ti, mandalo al <b>Hall</b>. En <b>Leyendas</b> puede seguir peleando por ELO sin afectar al Ludus.</li></ol></div><div class="panel"><h2>Reglas de pelea</h2><p><b>Normal:</b> pelea principal del Ludus. Cuenta record, fama, racha y rivalidad.</p><p><b>A vida o muerte:</b> checkbox de Arena. Si esta apagado, ese duelo no mata. Si esta encendido, hay riesgo real de muerte.</p><p><b>Sin muertes global:</b> bloquea todas las muertes mientras este activo y anula cualquier pelea a muerte.</p><p><b>Por titulo del Ludus:</b> el ganador queda como campeon. No tiene que ser el mas fuerte: es quien gano la pelea titular.</p></div></section><section class="grid2"><div class="panel"><h2>Battle Royale</h2><p>Inicias el BR y vas pulsando <b>Siguiente eliminacion</b>. En la final el juego pregunta dos cosas:</p><p><b>Clemencia:</b> perdonar o ejecutar al finalista.</p><p><b>Liberacion:</b> mandar al campeon al Hall o devolverlo al Ludus.</p></div><div class="panel"><h2>Interes</h2><p>El interes mide si una pelea parece importante por PWR, fama, racha, titulo y rivalidad. No te obliga a nada: solo ayuda a leer el cartel.</p></div></section>`}
+
+  function bind(){
+    document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;render()});
+    $("saveBtn").onclick=()=>{save();toast("Guardado")};$("exportBtn").onclick=exportSave;$("importFile").onchange=importSave;$("freshBtn").onclick=freshModal;
+    $("quickFight").onclick=()=>{view="arena";simulate("normal",{noDeath:true})};$("quickRecruit").onclick=()=>{fill(1);};$("quickRest").onclick=()=>{state.ludus.forEach(g=>g.active=true);save();render()};
+    const nb=$("newBtn");if(nb)nb.onclick=newModal;const fb=$("fillBtn");if(fb)fb.onclick=()=>fill(99);const cb=$("capBtn");if(cb)cb.onclick=()=>{state.cap=clamp(+$("capInput").value||8,2,80);save();render()};
+    const pac=$("pacific");if(pac)pac.onchange=e=>{state.pacific=e.target.checked;save();render()};const ar=$("autoReplace");if(ar)ar.onchange=e=>{state.autoReplace=e.target.checked;save();render()};
+    document.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{const g=findL(b.dataset.toggle);if(g){g.active=!g.active;save();render()}});document.querySelectorAll("[data-retire]").forEach(b=>b.onclick=()=>{const g=findL(b.dataset.retire);if(g){retire(g);save();render()}});document.querySelectorAll("[data-expel]").forEach(b=>b.onclick=()=>{const g=findL(b.dataset.expel);if(g){state.ludus=state.ludus.filter(x=>x.id!==g.id);log(`${g.name} expulsado`);save();render()}});document.querySelectorAll("[data-card]").forEach(b=>b.onclick=()=>cardModal(b.dataset.card));document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editModal(b.dataset.edit));
+    const pm=$("pairMode");if(pm){pm.value=state.pairMode;pm.onchange=e=>{state.pairMode=e.target.value;save()}};
+    document.querySelectorAll(".duelPick").forEach(ch=>ch.onchange=()=>{let ids=[...document.querySelectorAll(".duelPick:checked")].map(x=>x.value);if(ids.length>2){ch.checked=false;toast("Solo dos gladiadores");ids=[...document.querySelectorAll(".duelPick:checked")].map(x=>x.value)}pickState.a=ids[0]||null;pickState.b=ids[1]||null;render()});
+    const mf=$("mortalFight");if(mf)mf.onchange=e=>{pickState.mortal=e.target.checked;render()};
+    const tf=$("titleFight");if(tf)tf.onchange=e=>{pickState.title=e.target.checked;render()};
+    const ap=$("arenaPacific");if(ap)ap.onchange=e=>{state.pacific=e.target.checked;save();render()};
+    const rs=$("runSelected");if(rs)rs.onclick=()=>fight(findL(pickState.a),findL(pickState.b),arenaFightType(),arenaFightOptions());
+    const r1=$("randomOne");if(r1)r1.onclick=()=>simulate();
+    const r5=$("randomFive");if(r5)r5.onclick=()=>runRandomMany(5);
+    const r20=$("randomTwenty");if(r20)r20.onclick=()=>runRandomMany(20);
+    document.querySelectorAll("[data-rival]").forEach(b=>b.onclick=()=>{const r=state.rivalries[b.dataset.rival];if(r){pickState.a=r.aId;pickState.b=r.bId;pickState.title=false;pickState.mortal=false;view="arena";render()}});document.querySelectorAll("[data-rival-blood]").forEach(b=>b.onclick=()=>{const r=state.rivalries[b.dataset.rivalBlood];if(r){pickState.a=r.aId;pickState.b=r.bId;pickState.title=false;pickState.mortal=true;view="arena";render()}});
+    document.querySelectorAll("[data-book-rank]").forEach(b=>b.onclick=()=>{const g=findL(b.dataset.bookRank),o=ranking().find(x=>x.id!==g.id);if(g&&o){pickState.a=g.id;pickState.b=o.id;pickState.title=isChampion(g)||isChampion(o);pickState.mortal=false;view="arena";render()}});
+    const tor4=$("tor4"),tor8=$("tor8"),tn=$("torNext"),tc=$("torClear"),brs=$("brStart"),brn=$("brNext"),brc=$("brClear"),a4=$("after4"),a8=$("after8"),an=$("afterNext");if(tor4)tor4.onclick=()=>startTournament(4);if(tor8)tor8.onclick=()=>startTournament(8);if(tn)tn.onclick=()=>stepTournament();if(tc)tc.onclick=()=>{state.classic=null;save();render()};if(brs)brs.onclick=startBR;if(brn)brn.onclick=stepBR;if(brc)brc.onclick=()=>{state.br=null;save();render()};if(a4)a4.onclick=()=>resurrectTournament(4);if(a8)a8.onclick=()=>resurrectTournament(8);if(an)an.onclick=stepAfterlife;
+    const lf=$("legFight"),lt4=$("legTor4"),lt8=$("legTor8"),ltn=$("legTorNext"),ltc=$("legTorClear"),lbs=$("legBRStart"),lbn=$("legBRNext"),lbc=$("legBRClear");if(lf)lf.onclick=()=>legendDuel(findH($("legA").value),findH($("legB").value));if(lt4)lt4.onclick=()=>startLegendTournament(4);if(lt8)lt8.onclick=()=>startLegendTournament(8);if(ltn)ltn.onclick=stepLegendTournament;if(ltc)ltc.onclick=()=>{state.legendTournament=null;save();render()};if(lbs)lbs.onclick=startLegendBR;if(lbn)lbn.onclick=stepLegendBR;if(lbc)lbc.onclick=()=>{state.legendBR=null;save();render()};
+    const cl=$("clearLog");if(cl)cl.onclick=()=>{state.log=[];save();render()};const liveClear=$("clearLiveLog");if(liveClear)liveClear.onclick=()=>{state.log=[];save();render()};$("modalClose").onclick=closeModal;$("modalBack").onclick=e=>{if(e.target===$("modalBack"))closeModal()};
+  }
+  function openModal(title,html){$("modalTitle").textContent=title;$("modalBody").innerHTML=html;$("modalBack").style.display="flex"}
+  function closeModal(){$("modalBack").style.display="none";$("modalBody").innerHTML=""}
+  function showChoice(title,text,yesText="Si",noText="No"){return new Promise(resolve=>{openModal(title,`<p class="small" style="white-space:pre-wrap">${esc(text)}</p><div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn" id="choiceNo">${esc(noText)}</button><button class="btn primary" id="choiceYes">${esc(yesText)}</button></div>`);$("choiceYes").onclick=()=>{closeModal();resolve(true)};$("choiceNo").onclick=()=>{closeModal();resolve(false)}})}
+  function newModal(){if(state.ludus.length>=state.cap){toast("Capacidad completa");return}openModal("Crear gladiador",`<div class="grid2"><label>Nombre<input id="nName" value="${pick(names)}"></label><label>Rol<select id="nRole">${roles.map(r=>`<option>${esc(r)}</option>`).join("")}</select></label><label>Origen<select id="nOrigin">${origins.map(o=>`<option>${esc(o)}</option>`).join("")}</select></label><label>HP<input id="nHp" type="number" value="100"></label><label>STR<input id="nStr" type="number" value="75"></label><label>DEF<input id="nDef" type="number" value="75"></label><label>AGI<input id="nAgi" type="number" value="75"></label></div><div class="row" style="margin-top:10px"><button class="btn good" id="create">Crear</button></div>`);$("create").onclick=()=>{if(state.ludus.length>=state.cap)return toast("Capacidad completa");state.ludus.push(make({name:$("nName").value.trim()||pick(names),role:$("nRole").value,origin:$("nOrigin").value,hp:+$("nHp").value,str:+$("nStr").value,def:+$("nDef").value,agi:+$("nAgi").value}));closeModal();save();render()}}
+  function editModal(id){const g=findL(id);if(!g)return;openModal("Editar",`<div class="grid2"><label>Nombre<input id="eName" value="${esc(g.name)}"></label><label>Rol<select id="eRole">${roles.map(r=>`<option ${r===g.role?"selected":""}>${esc(r)}</option>`).join("")}</select></label><label>HP<input id="eHp" type="number" value="${g.hp}"></label><label>STR<input id="eStr" type="number" value="${g.str}"></label><label>DEF<input id="eDef" type="number" value="${g.def}"></label><label>AGI<input id="eAgi" type="number" value="${g.agi}"></label><label>Fama<input id="eFame" type="number" value="${g.fame}"></label><label>Victorias<input id="eWins" type="number" value="${g.wins}"></label></div><div class="row" style="margin-top:10px"><button class="btn good" id="saveEdit">Guardar</button></div>`);$("saveEdit").onclick=()=>{g.name=$("eName").value.trim()||g.name;g.role=$("eRole").value;g.hp=+$("eHp").value;g.str=+$("eStr").value;g.def=+$("eDef").value;g.agi=+$("eAgi").value;g.fame=+$("eFame").value;g.wins=+$("eWins").value;fix(g);closeModal();save();render()}}
+  function cardModal(id){const g=findAny(id);if(!g)return;openModal(g.name,`<div class="grid2"><section>${mini(g)}<div style="margin-top:10px">${bar("HP",g.hp,45,210)}${bar("STR",g.str,30,200)}${bar("DEF",g.def,30,200)}${bar("AGI",g.agi,30,200)}</div></section><section><h2>Historial</h2><div class="log">${g.history.map(h=>`[${h.t}] ${h.result} vs ${h.vs} · ${h.type} · interes ${h.hype}. ${h.text}`).map(esc).join("\n")||"Sin historial."}</div></section></div>`)}
+  function freshModal(){openModal("Nuevo ludus",`<p class="small">Borra solo la partida guardada de este archivo.</p><div class="row"><button class="btn bad" id="doFresh">Empezar</button></div>`);$("doFresh").onclick=()=>{localStorage.removeItem(STORAGE);seed();closeModal();render()}}
+  function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ludus_simple_save.json";a.click();URL.revokeObjectURL(a.href)}
+  function importSave(e){const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);normalize();save();render();toast("Importado")}catch(err){toast("JSON invalido")}};r.readAsText(f);e.target.value=""}
+
+  load();if(!state.ludus.length)seed();render();
+})();
+</script>
+</body>
+</html>
