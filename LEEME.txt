@@ -1,0 +1,10 @@
+LUDUS 3 · IMÁGENES INTEGRADAS
+
+1. Descomprime el ZIP.
+2. Sube sus ocho archivos a la raíz del repositorio de GitHub.
+3. Sustituye los archivos existentes con los mismos nombres.
+4. Espera a que Pages termine de publicar y recarga la web.
+
+No hay carpetas que crear ni imágenes sueltas que ordenar: todo el juego y sus gráficos están dentro de index.html. Los archivos antiguos sueltos pueden permanecer; esta edición no los necesita.
+
+Conserva el mismo sistema de guardado local y las mismas reglas de Ludus 3. El manual se abre desde Opciones.

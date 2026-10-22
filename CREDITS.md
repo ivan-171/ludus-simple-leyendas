@@ -72,3 +72,6 @@ The page explicitly identifies the sprites as CC0. Source page snapshot retained
 - Local font: `fonts/Inter.woff2`; original license: `fonts/inter-OFL.txt`.
 
 Cinzel and Inter WOFF2 files were downloaded from the official Google Fonts CSS/CDN and bundled locally. These are genuine WOFF2 files, not renamed TrueType files. Their Latin subsets include Spanish accented letters.
+
+
+Edición integrada: los recursos descritos se incluyen como datos embebidos en index.html. Las licencias de fuentes se adjuntan en LICENCIAS_FUENTES.txt.
