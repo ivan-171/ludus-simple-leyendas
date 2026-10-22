@@ -1,45 +1,36 @@
-# Manual de Ludus Simple Leyendas
+# Ludus 3
 
-## Idea
+Ocho gladiadores, carreras persistentes y narrativa emergente. Duelos amistosos o a muerte, torneos seguros, Battle Royale con indulto y libertad, bestias, Olimpo y Torneo del Más Allá. Interfaz gráfica con controles táctiles y simulación por tandas de 1 / 5 / 20 / 100.
 
-Este juego no tiene modo historia cerrado. Tu historia nace de lo que ocurre: victorias, muertes, rachas, rivalidades, campeones, retiradas al Hall y duelos de leyendas.
+## Jugar y publicar
 
-## Flujo recomendado
+Descomprime y sube **todo el contenido** al repositorio, conservando las carpetas. `index.html` debe quedar en la raíz. Hay menos de 100 archivos: una sola subida. Configura GitHub Pages desde la rama y la raíz. No mezcles los archivos con una edición anterior.
 
-1. Entra en **Ludus** y crea o rellena gladiadores.
-2. En **Arena**, marca dos gladiadores y pulsa **Pelear seleccionados**.
-3. Para generar historia rápida, usa **Aleatorio x1**, **Aleatorio x5** o **Aleatorio x20**.
-4. Mira **Ranking** para decidir quién merece una pelea importante.
-5. Usa **Torneos** cuando quieras un evento grande.
-6. Cuando un gladiador ya sea mítico para ti, mándalo al **Hall**.
-7. En **Leyendas**, los retirados siguen peleando por ELO sin romper tu Ludus.
+Todos los gráficos y fuentes están incluidos; no necesita compilación ni servicios externos. Para una prueba local usa cualquier servidor estático. El modo offline funciona tras la primera carga desde HTTPS o localhost.
 
-## Reglas de pelea
+**Manual completo y guía de pruebas: [MANUAL.html](MANUAL.html).** También se abre desde Opciones dentro del juego.
 
-- **Normal**: combate principal del Ludus. Cuenta para victorias, fama, rachas y rivalidades.
-- **A vida o muerte**: checkbox de Arena. Si está apagado, ese duelo no mata. Si está encendido, hay riesgo real de muerte.
-- **Sin muertes global**: bloquea todas las muertes mientras este activo y anula cualquier pelea a muerte.
-- **Por título del Ludus**: el ganador queda como campeón. No tiene que ser el más fuerte: es quien ganó la pelea titular.
+## Guardado
 
-## Battle Royale
+Automático en IndexedDB, con copia anterior. Exportación e importación JSON con comprobación de integridad y validación de registros. Migra partidas de Ludus Simple v2, conserva las decisiones y tandas pendientes. El Ludus Imperium original usa otro modelo de guardado.
 
-Pulsa **Iniciar BR** y después **Siguiente eliminación**.
+## Comprobaciones
 
-Cuando quedan dos finalistas, el juego pregunta:
+`node tests/engine.test.js`
 
-- **Clemencia**: perdonar o ejecutar al perdedor.
-- **Liberación**: mandar al campeón al Hall de la Fama o devolverlo al Ludus.
+`node tests/browser.test.js` requiere Playwright y Chromium. Configura `PLAYWRIGHT_MODULE` con la ruta al módulo y `CHROME_BIN` con el ejecutable si no coinciden con el entorno de desarrollo.
 
-## Botones clave
+Los resultados están en `tests/engine-results.json` y `tests/browser-results.json`. `TESTING.md` explica alcance y limitaciones. Los tests usan una partida antigua sintética incluida como fixture, sin datos personales.
 
-- **Pelear seleccionados**: resuelve exactamente los dos gladiadores marcados.
-- **Aleatorio x1**: el juego elige una pelea según el criterio automático.
-- **Aleatorio x5 / x20**: simula varios duelos automáticos para generar historia rápido.
-- **Interés**: mide lo importante que parece una pelea por PWR, fama, racha, título y rivalidad.
+## Organización
 
-## Consejos
+- `combat.js`: simulación pura y reproducible, eventos y clasificación completa.
+- `pocket.js`: carreras, Elo, crecimiento, estados, decisiones, torneos y guardados.
+- `app.js`: interfaz táctil y presentación de decisiones.
+- `art.js`: sprites y reproducción visual de las acciones simuladas.
+- `store.js`: guardado y respaldo.
+- `sw.js`: recursos locales para recarga sin conexión, ámbito relativo de Pages.
 
-- Activa **Sin muertes** si quieres una partida tipo liga/ranking.
-- Desactívalo si quieres un Ludus más brutal y emergente.
-- Usa el Hall como decisión narrativa, no como obligación.
-- El Ranking no manda: solo te da pistas para montar mejores peleas.
+No hay reloj, economía ni mercado. Las lesiones duran combates propios. La muerte y la libertad son estados separados y no borran registros. Los torneos amistosos no pueden producir bajas. Los atributos del Olimpo permanecen congelados.
+
+Créditos y licencias en `assets/vendor/CREDITS.md` y `LICENSE`.

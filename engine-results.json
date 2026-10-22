@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-22T13:41:12.829Z",
+  "checks": 57639,
+  "results": [
+    {
+      "name": "Inicio: ocho plazas, nombres únicos, estados persistentes",
+      "pass": true,
+      "ms": 11
+    },
+    {
+      "name": "Reproducción determinista y BR con clasificación completa",
+      "pass": true,
+      "ms": 97
+    },
+    {
+      "name": "Amistosos y torneos nunca matan, aunque se solicite mortalidad",
+      "pass": true,
+      "ms": 111
+    },
+    {
+      "name": "Torneos 4, 8 y 16: cuadros, campeón, bonus y hazañas una sola vez",
+      "pass": true,
+      "ms": 3
+    },
+    {
+      "name": "BR: eliminados muertos, finalista indultable y campeón liberable, sin autorrelleno prematuro",
+      "pass": true,
+      "ms": 62
+    },
+    {
+      "name": "Duelo a muerte y muerte ante bestia; indulto por trayectoria",
+      "pass": true,
+      "ms": 1
+    },
+    {
+      "name": "Bestias: tres niveles y exhibiciones seguras",
+      "pass": true,
+      "ms": 25
+    },
+    {
+      "name": "Tandas: pausa exacta, guardado de decisiones y continuación sin duplicados",
+      "pass": true,
+      "ms": 4
+    },
+    {
+      "name": "Autorrelleno, edición de capacidad, crear, retirar y libertad voluntaria",
+      "pass": true,
+      "ms": 1
+    },
+    {
+      "name": "Más Allá: récord independiente, resurrección con identidad conservada y una sola segunda oportunidad",
+      "pass": true,
+      "ms": 1
+    },
+    {
+      "name": "Olimpo: todos los formatos, atributos y carrera congelados, Elo y fama propios",
+      "pass": true,
+      "ms": 22
+    },
+    {
+      "name": "Perks de novato campeón: efecto mecánico comprobable sin mutar atributos",
+      "pass": true,
+      "ms": 0
+    },
+    {
+      "name": "Lesiones duran combates del herido, reducen rendimiento y no se curan al esperar",
+      "pass": true,
+      "ms": 5
+    },
+    {
+      "balance": {
+        "weak": 0.0012494301764667867,
+        "equal": 0.176,
+        "upset": 0.500896127512069,
+        "repeated20": 0.014666666666666666
+      }
+    },
+    {
+      "name": "Aprendizaje monotónico y antifarmeo: novedad, dificultad y límite asintótico",
+      "pass": true,
+      "ms": 59
+    },
+    {
+      "name": "Elo: suma cero en duelos y BR, victoria contra favorito da más",
+      "pass": true,
+      "ms": 0
+    },
+    {
+      "name": "Venganza: muerte real del mentor, objetivo correcto, discípulo vence y hazaña única",
+      "pass": true,
+      "ms": 1
+    },
+    {
+      "name": "Némesis y rivalidad conservan derrotas y cruces",
+      "pass": true,
+      "ms": 2
+    },
+    {
+      "name": "Emparejamiento: seis modos, equidad de participación y selección manual",
+      "pass": true,
+      "ms": 88
+    },
+    {
+      "name": "Guardado: corrupción rechazada, decisiones y tandas restauradas exactamente",
+      "pass": true,
+      "ms": 10
+    },
+    {
+      "name": "Atributos importados de 100 no bajan al aplicar el techo suave",
+      "pass": true,
+      "ms": 0
+    },
+    {
+      "name": "Migración de una partida real de Ludus Simple v2",
+      "pass": true,
+      "ms": 2
+    },
+    {
+      "stress": {
+        "events": 10000,
+        "bouts": 29554,
+        "entities": 26113,
+        "dead": 25382,
+        "olympus": 592,
+        "counts": {
+          "ludus:duel": 3500,
+          "ludus:cup": 1750,
+          "ludus:beast": 1750,
+          "ludus:br": 1749,
+          "afterlife:afterlife": 526,
+          "olympus:duel": 290,
+          "olympus:cup": 145,
+          "olympus:br": 145,
+          "olympus:beast": 145
+        }
+      }
+    },
+    {
+      "name": "Estrés: 10.000 eventos mixtos, muertes, decisiones, Olimpo y Más Allá",
+      "pass": true,
+      "ms": 177666
+    }
+  ]
+}
